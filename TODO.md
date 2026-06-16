@@ -1,3 +1,2 @@
-- [ ] Configure app mail server
 - [ ] Off-site server backups
-- [ ] Promote admin users
+- [ ] Dep updates

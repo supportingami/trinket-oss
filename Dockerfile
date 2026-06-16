@@ -1,26 +1,23 @@
-# Use Node 16 LTS (compatible with updated packages)
-FROM node:16-bullseye
+# --- Stage 1: Build & Install dependencies ---
+FROM node:16-bullseye AS builder
 
 SHELL ["/bin/bash", "-c"]
 
-# Install build dependencies
+# Install build dependencies for native addon compilation (e.g. bcrypt)
 RUN apt-get update \
     && apt-get install -y python3 build-essential \
     && apt-get -y autoclean
 
-# Install global tools
-RUN npm install -g pm2@5
-
-RUN groupadd -r trinket && \
-    useradd -r -g trinket -m -c "trinket user" trinket
-
-RUN mkdir -p /usr/local/node/trinket && chown trinket:trinket /usr/local/node/trinket
-
-USER trinket
-
-COPY --chown=trinket:trinket . /usr/local/node/trinket
-
 WORKDIR /usr/local/node/trinket
+
+# Copy package definition files
+COPY package.json package-lock.json ./
+
+# Install ALL dependencies (including devDependencies like vite/sass for CSS building)
+RUN npm install --legacy-peer-deps
+
+# Copy the rest of the application files
+COPY . .
 
 # Download frontend components from GitHub release
 RUN curl -L --silent -o ./public-components.tgz \
@@ -28,10 +25,32 @@ RUN curl -L --silent -o ./public-components.tgz \
     && tar xzf public-components.tgz \
     && rm public-components.tgz
 
-RUN npm install --legacy-peer-deps
-
 # Build CSS assets for distribution
 RUN npm run build:css
+
+# Prune devDependencies to keep the runtime node_modules minimal
+RUN npm prune --production
+
+# --- Stage 2: Production runtime environment ---
+FROM node:16-slim AS runner
+
+SHELL ["/bin/bash", "-c"]
+
+# Install global PM2 to manage processes in container
+RUN npm install -g pm2@5
+
+# Create a non-root group and user
+RUN groupadd -r trinket && \
+    useradd -r -g trinket -m -c "trinket user" trinket
+
+# Set up the application directory
+RUN mkdir -p /usr/local/node/trinket && chown trinket:trinket /usr/local/node/trinket
+
+USER trinket
+WORKDIR /usr/local/node/trinket
+
+# Copy only the built assets, code, and pruned node_modules from the builder stage
+COPY --from=builder --chown=trinket:trinket /usr/local/node/trinket /usr/local/node/trinket
 
 ARG COMMIT_ID
 ARG NODE_ENV

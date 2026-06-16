@@ -1,1 +1,13 @@
 **/.git
+**/.github
+**/node_modules
+**/test
+**/serverside
+**/README.md
+**/GETTING_STARTED.md
+**/COMPONENTS.md
+**/TODO.md
+**/LICENSE
+**/CONTRIBUTING.md
+**/CODE_OF_CONDUCT.md
+**/CHANGELOG.md
