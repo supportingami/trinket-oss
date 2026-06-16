@@ -76,6 +76,9 @@ To deploy in production:
 
 ### Environment Variables
 
+> [!NOTE]
+> **Email Server Opt-In:** Email features (such as password resets and notifications) are disabled by default. To opt-in and configure the mail server, you must set either `RESEND_API_KEY` (to use Resend's SMTP settings automatically) or `MAIL_HOST` / `MAIL_PASS` (to use a generic SMTP server). If none of these variables are defined, the email configuration is completely omitted and email functionality is gracefully disabled.
+
 | Variable | Required/Optional | Default | Description |
 |---|---|---|---|
 | `SESSION_COOKIE_PASSWORD` | **Required** | *Generated* | Session cookie encryption secret (min 32 characters). If not provided, a secure key is generated automatically on startup, but sessions will reset when the container restarts. |
@@ -95,6 +98,12 @@ To deploy in production:
 | `AWS_CDN_HOST` | Optional | *None* | Custom CDN host URL (e.g. `https://your-cdn.example.com`). If not set, CDN requests fall back to loading Skulpt assets locally. |
 | `APP_EMBED_SKULPT_LOCAL` | Optional | `true` | Set to `true` to load Skulpt assets locally from the application container. Defaults to `true` unless `AWS_CDN_HOST` is specified. |
 | `APP_EMBED_SKULPT_MIN` | Optional | `true` | Set to `true` to load the minified version of local Skulpt core assets. |
+| `RESEND_API_KEY` | Optional | *None* | Resend API Key for mail. When set, SMTP defaults to `smtp.resend.com`, port `587`, and user `resend` unless overridden. |
+| `MAIL_FROM` | Optional | *None* | Sender email address for mail (must be verified domain or email with your provider). |
+| `MAIL_HOST` | Optional | *None* | SMTP server host (defaults to `smtp.resend.com` if `RESEND_API_KEY` is provided). |
+| `MAIL_PORT` | Optional | `587` | SMTP server port. |
+| `MAIL_USER` | Optional | *None* | SMTP server username (defaults to `resend` if `RESEND_API_KEY` is provided). |
+| `MAIL_PASS` | Optional | *None* | SMTP server password (ignored if `RESEND_API_KEY` is provided). |
 
 
 To run the production environment:

@@ -18,6 +18,7 @@ let inAppUrl = false;
 let inCookieOptions = false;
 let inMongo = false;
 let inRedis = false;
+let inMail = false;
 let inEmbedSkulpt = false;
 let inCdn = false;
 
@@ -52,6 +53,15 @@ const redisPort = process.env.REDIS_PORT || '6379';
 const redisPass = process.env.REDIS_PASS;
 const redisDatabase = process.env.REDIS_DB || '0';
 
+const hasMailConfig = !!(process.env.RESEND_API_KEY || process.env.MAIL_HOST || process.env.MAIL_PASS);
+const isResend = !!process.env.RESEND_API_KEY;
+
+const mailFrom = process.env.MAIL_FROM || '';
+const mailHost = process.env.MAIL_HOST || (isResend ? 'smtp.resend.com' : '');
+const mailPort = process.env.MAIL_PORT || '587';
+const mailUser = process.env.MAIL_USER || (isResend ? 'resend' : '');
+const mailPass = process.env.RESEND_API_KEY || process.env.MAIL_PASS || '';
+
 const awsCdnHost = process.env.AWS_CDN_HOST !== undefined ? process.env.AWS_CDN_HOST : '';
 const appEmbedSkulptLocal = process.env.APP_EMBED_SKULPT_LOCAL !== undefined
   ? (process.env.APP_EMBED_SKULPT_LOCAL === 'true')
@@ -73,6 +83,11 @@ for (let i = 0; i < lines.length; i++) {
     inMongo = true;
   } else if (trimmed === 'redis:') {
     inRedis = true;
+  } else if (trimmed === 'mail:') {
+    inMail = true;
+    if (!hasMailConfig) {
+      continue;
+    }
   } else if (trimmed === 'skulpt:') {
     inEmbedSkulpt = true;
   } else if (trimmed === 'cdn:') {
@@ -182,6 +197,32 @@ for (let i = 0; i < lines.length; i++) {
     }
   }
 
+  if (inMail) {
+    if (!hasMailConfig) {
+      continue;
+    }
+    if (trimmed.startsWith('from:')) {
+      newLines.push(line.replace(/from:.*/, `from: '${mailFrom}'`));
+      continue;
+    }
+    if (trimmed.startsWith('host:')) {
+      newLines.push(line.replace(/host:.*/, `host: '${mailHost}'`));
+      continue;
+    }
+    if (trimmed.startsWith('port:')) {
+      newLines.push(line.replace(/port:.*/, `port: ${mailPort}`));
+      continue;
+    }
+    if (trimmed.startsWith('user:')) {
+      newLines.push(line.replace(/user:.*/, `user: '${mailUser}'`));
+      continue;
+    }
+    if (trimmed.startsWith('pass:')) {
+      newLines.push(line.replace(/pass:.*/, `pass: '${mailPass}'`));
+      continue;
+    }
+  }
+
   // Section reset on empty lines
   if (trimmed === '') {
     inAppUrl = false;
@@ -190,6 +231,7 @@ for (let i = 0; i < lines.length; i++) {
     inRedis = false;
     inEmbedSkulpt = false;
     inCdn = false;
+    inMail = false;
   }
 
   newLines.push(line);

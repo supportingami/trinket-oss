@@ -27,6 +27,8 @@ services:
       - AWS_CDN_HOST=${AWS_CDN_HOST}
       - APP_EMBED_SKULPT_LOCAL=${APP_EMBED_SKULPT_LOCAL:-true}
       - APP_EMBED_SKULPT_MIN=${APP_EMBED_SKULPT_MIN:-true}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - MAIL_FROM=${MAIL_FROM}
 
     restart: unless-stopped
     logging:

@@ -153,40 +153,18 @@ app:
 
 Email is required for password reset and notifications. Configure any SMTP provider:
 
-```yaml
-app:
-  mail:
-    from: 'noreply@example.com'
-    host: 'smtp.example.com'
-    port: 587
-    user: 'your-smtp-username'
-    pass: 'your-smtp-password'
-    secure: false  # true for port 465
-```
+**Environment Variables (Dynamic Configuration & Opt-In):**
+In container deployments, you configure and enable the mail server dynamically by setting either `RESEND_API_KEY` (for Resend) or `MAIL_HOST` / `MAIL_PASS` (for generic SMTP) in the environment. 
 
-Common providers:
+If none of these environment variables are provided, the configuration generator completely excludes the mail block from `local.yaml`. This ensures the application correctly detects that email is disabled and gracefully skips email operations.
 
-**Mailgun:**
-```yaml
-app:
-  mail:
-    from: 'noreply@your-domain.com'
-    host: 'smtp.mailgun.org'
-    port: 587
-    user: 'postmaster@your-domain.com'
-    pass: 'your-mailgun-smtp-password'
-```
-
-**SendGrid:**
-```yaml
-app:
-  mail:
-    from: 'noreply@example.com'
-    host: 'smtp.sendgrid.net'
-    port: 587
-    user: 'apikey'
-    pass: 'your-sendgrid-api-key'
-```
+Available variables:
+- `RESEND_API_KEY` - Your Resend API Key. When provided, SMTP defaults are set to Resend (host: `smtp.resend.com`, port: `587`, user: `resend`).
+- `MAIL_FROM` - The sender address for emails (must be a verified domain or email address with your provider).
+- `MAIL_HOST` - Your custom SMTP host.
+- `MAIL_PORT` - Your custom SMTP port (defaults to `587`).
+- `MAIL_USER` - Your custom SMTP username.
+- `MAIL_PASS` - Your custom SMTP password.
 
 Without email configured, password reset won't work. Users can still register, log in, and use all coding features.
 
