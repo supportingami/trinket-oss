@@ -74,6 +74,17 @@ for (let i = 0; i < lines.length; i++) {
   const line = lines[i];
   const trimmed = line.trim();
 
+  // Section reset on empty lines
+  if (trimmed === '') {
+    inAppUrl = false;
+    inCookieOptions = false;
+    inMongo = false;
+    inRedis = false;
+    inEmbedSkulpt = false;
+    inCdn = false;
+    inMail = false;
+  }
+
   // Section boundary detection
   if (trimmed === 'url:') {
     inAppUrl = true;
@@ -221,17 +232,6 @@ for (let i = 0; i < lines.length; i++) {
       newLines.push(line.replace(/pass:.*/, `pass: '${mailPass}'`));
       continue;
     }
-  }
-
-  // Section reset on empty lines
-  if (trimmed === '') {
-    inAppUrl = false;
-    inCookieOptions = false;
-    inMongo = false;
-    inRedis = false;
-    inEmbedSkulpt = false;
-    inCdn = false;
-    inMail = false;
   }
 
   newLines.push(line);
