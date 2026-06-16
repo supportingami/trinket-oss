@@ -7,7 +7,6 @@ services:
     ports:
       - 3000:3000
     container_name: trinket
-    command: bash -c "node scripts/generate-config.js && pm2-docker start app.js"
     environment:
       - NODE_ENV=production
       - SESSION_COOKIE_PASSWORD=${SESSION_COOKIE_PASSWORD}

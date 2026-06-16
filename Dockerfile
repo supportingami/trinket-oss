@@ -39,4 +39,4 @@ ENV NODE_ENV=$NODE_ENV
 
 EXPOSE 3000
 
-CMD ["pm2-docker", "start", "app.js"]
+CMD ["bash", "-c", "node scripts/generate-config.js && pm2-docker start app.js"]
