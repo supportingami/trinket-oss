@@ -1,40 +1,37 @@
 services:
   app:
-    build: .
-    image: trinket/app:latest
+    image: ghcr.io/supportingami/trinket-oss:latest # Pulled pre-built from GitHub
     ports:
       - 3000:3000
     container_name: trinket
     volumes:
-      - .:/usr/local/node/trinket
       - node_modules:/usr/local/node/trinket/node_modules
       - public_components:/usr/local/node/trinket/public/components
     networks:
       - trinket
-    links:
+    depends_on:
       - redis
       - mongodb
+
   redis:
-    image: redis:latest
-    ports:
-      - 16379:6379
+    image: redis:alpine
     container_name: redis
     networks:
       - trinket
+
   mongodb:
-    image: mongo:5
-    ports:
-      - 17017:27017
+    image: mongo:7.0
     container_name: mongodb
     volumes:
       - mongodb_data:/data/db
     networks:
       - trinket
+
 networks:
   trinket:
     driver: bridge
+
 volumes:
-  shared-cache:
   node_modules:
   public_components:
   mongodb_data:
