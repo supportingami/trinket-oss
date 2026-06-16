@@ -28,7 +28,8 @@ async function createClientAsync() {
     socket: {
       host: redisConfig.host,
       port: redisConfig.port
-    }
+    },
+    database: redisConfig.database || 0
   };
 
   if (redisConfig.pass) {

@@ -31,7 +31,10 @@ if (!sessionPassword) {
 
 const appUrlProtocol = process.env.APP_URL_PROTOCOL || 'http';
 const appUrlHostname = process.env.APP_URL_HOSTNAME || 'localhost';
-const appUrlPort = process.env.APP_URL_PORT || '3000';
+let appUrlPort = process.env.APP_URL_PORT !== undefined ? process.env.APP_URL_PORT : '3000';
+if (appUrlPort === 'none' || appUrlPort === 'null' || appUrlPort === 'undefined') {
+  appUrlPort = '';
+}
 const appSessionIsSecure = process.env.APP_SESSION_IS_SECURE || 'false';
 
 const mongoHost = process.env.MONGO_HOST || 'mongodb';
@@ -45,6 +48,7 @@ const redisEnabled = process.env.REDIS_ENABLED !== 'false';
 const redisHost = process.env.REDIS_HOST || 'redis';
 const redisPort = process.env.REDIS_PORT || '6379';
 const redisPass = process.env.REDIS_PASS;
+const redisDatabase = process.env.REDIS_DB || '0';
 
 const newLines = [];
 
@@ -106,7 +110,7 @@ for (let i = 0; i < lines.length; i++) {
       if (mongoUser && mongoPass) {
         const indent = line.match(/^\s*/)[0];
         newLines.push(`${indent}user: ${mongoUser}`);
-        newLines.push(`${indent}pass: ${mongoPass}`);
+        newLines.push(`${indent}pass: '${mongoPass}'`);
       }
       continue;
     }
@@ -123,23 +127,26 @@ for (let i = 0; i < lines.length; i++) {
         newLines.push(`${indent}  host: ${redisHost}`);
         newLines.push(`${indent}  port: ${redisPort}`);
         if (redisPass) {
-          newLines.push(`${indent}  pass: ${redisPass}`);
-          newLines.push(`${indent}  password: ${redisPass}`);
+          newLines.push(`${indent}  pass: '${redisPass}'`);
+          newLines.push(`${indent}  password: '${redisPass}'`);
         }
+        newLines.push(`${indent}  database: ${redisDatabase}`);
         newLines.push(`${indent}exports:`);
         newLines.push(`${indent}  host: ${redisHost}`);
         newLines.push(`${indent}  port: ${redisPort}`);
         if (redisPass) {
-          newLines.push(`${indent}  pass: ${redisPass}`);
-          newLines.push(`${indent}  password: ${redisPass}`);
+          newLines.push(`${indent}  pass: '${redisPass}'`);
+          newLines.push(`${indent}  password: '${redisPass}'`);
         }
+        newLines.push(`${indent}  database: ${redisDatabase}`);
         newLines.push(`${indent}sandbox:`);
         newLines.push(`${indent}  host: ${redisHost}`);
         newLines.push(`${indent}  port: ${redisPort}`);
         if (redisPass) {
-          newLines.push(`${indent}  pass: ${redisPass}`);
-          newLines.push(`${indent}  password: ${redisPass}`);
+          newLines.push(`${indent}  pass: '${redisPass}'`);
+          newLines.push(`${indent}  password: '${redisPass}'`);
         }
+        newLines.push(`${indent}  database: ${redisDatabase}`);
       }
       continue;
     }
