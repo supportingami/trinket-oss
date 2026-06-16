@@ -39,6 +39,17 @@ db:
   redis:
     enabled: false
 
+# =============================================================================
+# OPTIONAL: Email (for password reset)
+# =============================================================================
+# Without email, users can still register and log in, but password reset won't work.
+
+  mail:
+    from: ''
+    host: ''
+    port: 587
+    user: ''
+    pass: ''
 
 # =============================================================================
 # OPTIONAL: File Storage (for asset uploads in trinkets)
