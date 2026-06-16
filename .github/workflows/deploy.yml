@@ -30,6 +30,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/trinket-app:latest
+          tags: ghcr.io/${{ github.repository }}/trinket-oss:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
