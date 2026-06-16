@@ -14,15 +14,16 @@ services:
     links:
       - redis
       - mongodb
+    command: bash -c "npm run build:css && pm2-docker start app.js"
   redis:
-    image: redis:latest
+    image: redis:alpine
     ports:
       - 16379:6379
     container_name: redis
     networks:
       - trinket
   mongodb:
-    image: mongo:5
+    image: mongo:7.0
     ports:
       - 17017:27017
     container_name: mongodb

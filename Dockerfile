@@ -39,5 +39,4 @@ ENV NODE_ENV=$NODE_ENV
 
 EXPOSE 3000
 
-# Build CSS assets on startup to handle local development bind mounts, then start the server
-CMD ["bash", "-c", "npm run build:css && pm2-docker start app.js"]
+CMD ["pm2-docker", "start", "app.js"]
