@@ -14,7 +14,9 @@ config.isTest = node_env === 'test';
 
 // client-facing url
 config.url = config.app.url.protocol + '://' + config.app.url.hostname;
-if (config.app.url.port) config.url += ':' + config.app.url.port;
+if (config.app.url.port && config.app.url.port !== '80' && config.app.url.port !== '443' && config.app.url.port !== 80 && config.app.url.port !== 443) {
+  config.url += ':' + config.app.url.port;
+}
 
 // viewing certain snapshots from browser
 config.sandboxUrl = config.sandbox.url.protocol + '://' + config.sandbox.url.serverSubdomain + config.sandbox.url.domain;
