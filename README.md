@@ -102,6 +102,27 @@ To run the production environment:
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
+## Promoting Admin Users
+
+To promote a registered user to an administrator, run the `make-admin` script with the user's email. Note that the user must register an account first.
+
+### Using Docker (Local Development)
+
+```bash
+docker-compose exec app npm run make-admin user@example.com
+```
+
+### Using Docker (Production)
+
+```bash
+docker-compose -f docker-compose.prod.yml exec app npm run make-admin user@example.com
+```
+
+### Without Docker (Local Development)
+
+```bash
+npm run make-admin user@example.com
+```
 
 ## Development
 
