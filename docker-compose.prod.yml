@@ -7,26 +7,58 @@ services:
     ports:
       - 3000:3000
     container_name: trinket
-    volumes:
-      - node_modules:/usr/local/node/trinket/node_modules
-      - public_components:/usr/local/node/trinket/public/components
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - trinket
     depends_on:
-      - redis
-      - mongodb
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
 
   redis:
     image: redis:alpine
     container_name: redis
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - trinket
 
   mongodb:
     image: mongo:7.0
     container_name: mongodb
+    command: mongod --quiet
     volumes:
-      - mongodb_data:/data/db
+      - mongodb_prod_data:/data/db
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - trinket
 
@@ -35,6 +67,4 @@ networks:
     driver: bridge
 
 volumes:
-  node_modules:
-  public_components:
-  mongodb_data:
+  mongodb_prod_data:
