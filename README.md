@@ -92,6 +92,10 @@ To deploy in production:
 | `REDIS_HOST` | Optional | `redis` | Redis server hostname |
 | `REDIS_PORT` | Optional | `6379` | Redis server port |
 | `REDIS_PASS` | Optional | *None* | Password for Redis authentication (configured for all client connections and Bull queues) |
+| `AWS_CDN_HOST` | Optional | *None* | Custom CDN host URL (e.g. `https://your-cdn.example.com`). If not set, CDN requests fall back to loading Skulpt assets locally. |
+| `APP_EMBED_SKULPT_LOCAL` | Optional | `true` | Set to `true` to load Skulpt assets locally from the application container. Defaults to `true` unless `AWS_CDN_HOST` is specified. |
+| `APP_EMBED_SKULPT_MIN` | Optional | `true` | Set to `true` to load the minified version of local Skulpt core assets. |
+
 
 To run the production environment:
 ```bash

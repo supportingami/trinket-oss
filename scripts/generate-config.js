@@ -18,6 +18,8 @@ let inAppUrl = false;
 let inCookieOptions = false;
 let inMongo = false;
 let inRedis = false;
+let inEmbedSkulpt = false;
+let inCdn = false;
 
 // Determine configuration values from env or default
 // Generating a secure random 32-character password if not provided to allow zero-config run
@@ -50,6 +52,12 @@ const redisPort = process.env.REDIS_PORT || '6379';
 const redisPass = process.env.REDIS_PASS;
 const redisDatabase = process.env.REDIS_DB || '0';
 
+const awsCdnHost = process.env.AWS_CDN_HOST !== undefined ? process.env.AWS_CDN_HOST : '';
+const appEmbedSkulptLocal = process.env.APP_EMBED_SKULPT_LOCAL !== undefined
+  ? (process.env.APP_EMBED_SKULPT_LOCAL === 'true')
+  : (awsCdnHost === '');
+const appEmbedSkulptMin = process.env.APP_EMBED_SKULPT_MIN !== 'false';
+
 const newLines = [];
 
 for (let i = 0; i < lines.length; i++) {
@@ -65,6 +73,10 @@ for (let i = 0; i < lines.length; i++) {
     inMongo = true;
   } else if (trimmed === 'redis:') {
     inRedis = true;
+  } else if (trimmed === 'skulpt:') {
+    inEmbedSkulpt = true;
+  } else if (trimmed === 'cdn:') {
+    inCdn = true;
   }
 
   // Replacements & Output Generation
@@ -152,12 +164,32 @@ for (let i = 0; i < lines.length; i++) {
     }
   }
 
+  if (inEmbedSkulpt) {
+    if (trimmed.startsWith('local:')) {
+      newLines.push(line.replace(/local:.*/, `local: ${appEmbedSkulptLocal}`));
+      continue;
+    }
+    if (trimmed.startsWith('min:')) {
+      newLines.push(line.replace(/min:.*/, `min: ${appEmbedSkulptMin}`));
+      continue;
+    }
+  }
+
+  if (inCdn) {
+    if (trimmed.startsWith('host:')) {
+      newLines.push(line.replace(/host:.*/, `host: '${awsCdnHost}'`));
+      continue;
+    }
+  }
+
   // Section reset on empty lines
   if (trimmed === '') {
     inAppUrl = false;
     inCookieOptions = false;
     inMongo = false;
     inRedis = false;
+    inEmbedSkulpt = false;
+    inCdn = false;
   }
 
   newLines.push(line);

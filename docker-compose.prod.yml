@@ -24,6 +24,10 @@ services:
       - REDIS_PORT=${REDIS_PORT:-6379}
       - REDIS_PASS=${REDIS_PASS}
       - REDIS_DB=${REDIS_DB:-0}
+      - AWS_CDN_HOST=${AWS_CDN_HOST}
+      - APP_EMBED_SKULPT_LOCAL=${APP_EMBED_SKULPT_LOCAL:-true}
+      - APP_EMBED_SKULPT_MIN=${APP_EMBED_SKULPT_MIN:-true}
+
     restart: unless-stopped
     logging:
       driver: "json-file"

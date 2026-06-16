@@ -20,6 +20,11 @@ app:
         domain: ''
         isSecure: false  # Set true in production with HTTPS
 
+  embed:
+    skulpt:
+      local: true
+      min: true
+
 # =============================================================================
 # DATABASE
 # =============================================================================
@@ -92,3 +97,13 @@ db:
 #   siteName: 'My Code School'
 #   logo: '/img/my-logo.png'
 #   supportEmail: 'support@example.com'
+
+# =============================================================================
+# OPTIONAL: CDN Settings
+# =============================================================================
+
+aws:
+  buckets:
+    cdn:
+      host: ''
+
