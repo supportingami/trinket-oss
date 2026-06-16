@@ -3,7 +3,7 @@ services:
     # Run the image pre-built from github
     # This should be marked as public within the github packages configuration
     # or credentials provided to access
-    image: ghcr.io/supportingami/trinket-oss:latest
+    image: ghcr.io/supportingami/trinket-oss/app:latest
     ports:
       - 3000:3000
     container_name: trinket
