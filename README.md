@@ -66,6 +66,39 @@ Copy `config/local.example.yaml` to `config/local.yaml` and fill in the required
 
 See [GETTING_STARTED.md](GETTING_STARTED.md) for detailed setup of optional features.
 
+## Production Deployment (Docker)
+
+In production, the application is designed to be configured dynamically at container startup using environment variables. This keeps sensitive credentials out of the built Docker image.
+
+To deploy in production:
+1. Use the production Compose file: [docker-compose.prod.yml](docker-compose.prod.yml)
+2. Define the following environment variables in a `.env` file in the same directory:
+
+### Environment Variables
+
+| Variable | Required/Optional | Default | Description |
+|---|---|---|---|
+| `SESSION_COOKIE_PASSWORD` | **Required** | *Generated* | Session cookie encryption secret (min 32 characters). If not provided, a secure key is generated automatically on startup, but sessions will reset when the container restarts. |
+| `APP_URL_PROTOCOL` | Optional | `http` | Client-facing URL protocol (`http` or `https`) |
+| `APP_URL_HOSTNAME` | Optional | `localhost` | Client-facing URL hostname |
+| `APP_URL_PORT` | Optional | `3000` | Client-facing URL port |
+| `APP_SESSION_IS_SECURE` | Optional | `false` | Set to `true` to enable secure cookies (requires HTTPS setup) |
+| `MONGO_HOST` | Optional | `mongodb` | MongoDB host address |
+| `MONGO_PORT` | Optional | `27017` | MongoDB port |
+| `MONGO_DATABASE` | Optional | `trinket` | MongoDB database name |
+| `MONGO_USER` | Optional | *None* | MongoDB username |
+| `MONGO_PASS` | Optional | *None* | MongoDB password |
+| `REDIS_ENABLED` | Optional | `true` | Enable Redis for session caching and job queues |
+| `REDIS_HOST` | Optional | `redis` | Redis server hostname |
+| `REDIS_PORT` | Optional | `6379` | Redis server port |
+| `REDIS_PASS` | Optional | *None* | Password for Redis authentication (configured for all client connections and Bull queues) |
+
+To run the production environment:
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+
 ## Development
 
 ### Running without Docker

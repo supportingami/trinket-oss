@@ -44,6 +44,7 @@ const mongoPass = process.env.MONGO_PASS;
 const redisEnabled = process.env.REDIS_ENABLED !== 'false';
 const redisHost = process.env.REDIS_HOST || 'redis';
 const redisPort = process.env.REDIS_PORT || '6379';
+const redisPass = process.env.REDIS_PASS;
 
 const newLines = [];
 
@@ -121,12 +122,24 @@ for (let i = 0; i < lines.length; i++) {
         newLines.push(`${indent}app:`);
         newLines.push(`${indent}  host: ${redisHost}`);
         newLines.push(`${indent}  port: ${redisPort}`);
+        if (redisPass) {
+          newLines.push(`${indent}  pass: ${redisPass}`);
+          newLines.push(`${indent}  password: ${redisPass}`);
+        }
         newLines.push(`${indent}exports:`);
         newLines.push(`${indent}  host: ${redisHost}`);
         newLines.push(`${indent}  port: ${redisPort}`);
+        if (redisPass) {
+          newLines.push(`${indent}  pass: ${redisPass}`);
+          newLines.push(`${indent}  password: ${redisPass}`);
+        }
         newLines.push(`${indent}sandbox:`);
         newLines.push(`${indent}  host: ${redisHost}`);
         newLines.push(`${indent}  port: ${redisPort}`);
+        if (redisPass) {
+          newLines.push(`${indent}  pass: ${redisPass}`);
+          newLines.push(`${indent}  password: ${redisPass}`);
+        }
       }
       continue;
     }

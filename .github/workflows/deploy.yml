@@ -15,48 +15,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Generate Local Config
-        # This step correctly creates a config file (config/local.yaml) via the template
-        # config/local.example.yaml following the guidance in README.md.
-        #
-        # It populates configurations from GitHub Secrets and Actions Variables:
-        #
-        # Required Secrets:
-        #   - SESSION_COOKIE_PASSWORD: Session cookie secret (min 32 characters). If not provided,
-        #                              the script will automatically generate a secure 32-character
-        #                              random key to prevent application crash on startup.
-        #
-        # Optional Variables (configured under Settings -> Secrets and variables -> Actions):
-        #   - APP_URL_PROTOCOL: protocol for client-facing URL (defaults to 'http')
-        #   - APP_URL_HOSTNAME: hostname for client-facing URL (defaults to 'localhost')
-        #   - APP_URL_PORT: port for client-facing URL (defaults to '3000')
-        #   - APP_SESSION_IS_SECURE: whether session cookie is secure (defaults to 'false')
-        #   - MONGO_HOST: MongoDB hostname (defaults to 'mongodb' to match docker-compose.prod.yml)
-        #   - MONGO_PORT: MongoDB port (defaults to '27017')
-        #   - MONGO_DATABASE: MongoDB database name (defaults to 'trinket')
-        #   - REDIS_ENABLED: Enable Redis caching (defaults to 'true' to match docker-compose.prod.yml)
-        #   - REDIS_HOST: Redis hostname (defaults to 'redis' to match docker-compose.prod.yml)
-        #   - REDIS_PORT: Redis port (defaults to '6379')
-        #
-        # Optional Secrets (configured under Settings -> Secrets and variables -> Actions -> Secrets):
-        #   - MONGO_USER: MongoDB username (optional)
-        #   - MONGO_PASS: MongoDB password (optional)
-        env:
-          SESSION_COOKIE_PASSWORD: ${{ secrets.SESSION_COOKIE_PASSWORD }}
-          APP_URL_PROTOCOL: ${{ vars.APP_URL_PROTOCOL }}
-          APP_URL_HOSTNAME: ${{ vars.APP_URL_HOSTNAME }}
-          APP_URL_PORT: ${{ vars.APP_URL_PORT }}
-          APP_SESSION_IS_SECURE: ${{ vars.APP_SESSION_IS_SECURE }}
-          MONGO_HOST: ${{ vars.MONGO_HOST }}
-          MONGO_PORT: ${{ vars.MONGO_PORT }}
-          MONGO_DATABASE: ${{ vars.MONGO_DATABASE }}
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASS: ${{ secrets.MONGO_PASS }}
-          REDIS_ENABLED: ${{ vars.REDIS_ENABLED }}
-          REDIS_HOST: ${{ vars.REDIS_HOST }}
-          REDIS_PORT: ${{ vars.REDIS_PORT }}
-        run: node scripts/generate-config.js
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
