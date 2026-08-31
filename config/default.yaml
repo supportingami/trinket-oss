@@ -3,19 +3,20 @@ features:
   assets: false   # Enable/disable asset uploads (requires S3 or compatible storage)
   accessibilityToggle: false  # Show accessibility toggle in embed toolbar (for screen reader mode)
   trinkets:
-    # Client-side languages - work out of the box
-    python: true       # Skulpt-based Python 2/3 (enabled by default)
-    html: false        # HTML/CSS/JS
-    blocks: false      # Block-based coding
-    glowscript: false  # 3D graphics with GlowScript/VPython
-    glowscript-blocks: false
-    console: false     # Python console/REPL
-    music: false       # EarSketch music coding
-    # Server-side languages - require additional backend services
-    python3: false     # Requires Python 3 backend
-    java: false        # Requires Java backend
-    pygame: false      # Requires Pygame backend
-    R: false           # Requires R backend
+    # Client-side languages - work out of the box (100% in-browser)
+    python: true       # Skulpt-based Python (with Pygal, Turtle, etc.)
+    html: true         # HTML/CSS/JS dual-pane editor
+    blocks: true       # Google Blockly visual programming
+    glowscript: true   # 3D WebGL physics simulations
+    glowscript-blocks: true # Blockly for 3D physics
+    console: true      # Python interactive console/REPL
+    music: true        # Music notation & MIDI synthesizer
+    # Server-side languages - require container backend runners
+    python3: false     # Requires Python 3 backend runner (python-runner)
+    java: false        # Requires Java backend runner
+    pygame: false      # Requires Pygame backend runner
+    R: false           # Requires R backend runner
+
 
 app:
   siteName: 'Trinket'

@@ -30,10 +30,18 @@ var oneLineEval     = 'evaluationresult = ',
     comment         = /^\s*#/;
 
 var LOADED_EXTERNAL_LIBRARIES = {};
-var GRAPHICS_LIBRARIES_REGEXP = /^(turtle|processing|matplotlib\.pyplot|image)$/i;
+var GRAPHICS_LIBRARIES_REGEXP = /^(turtle|processing|matplotlib\.pyplot|image|pygal)$/i;
 var destroyGraphicsFn;
 var defaultGraphicsSetup = {
+  pygal : function(config, $target) {
+    if (typeof destroyGraphicsFn === 'function') {
+      destroyGraphicsFn();
+    }
+    $target.data("graphicMode", "pygal");
+    return $target.empty();
+  },
   turtle : function(config, $target) {
+
     if (typeof destroyGraphicsFn === 'function') {
       destroyGraphicsFn();
     }
@@ -126,7 +134,16 @@ var defaultGraphicsSetup = {
   }
 };
 var defaultExternalLibraries = {
+  './pygal/__init__.js' : {
+    path : trinketConfig.prefix('/js/skulpt/pygal/__init__.js'),
+    dependencies : [
+      trinketConfig.prefix('/js/vendor/highcharts/highcharts.js'),
+      trinketConfig.prefix('/js/vendor/highcharts/highcharts-more.js')
+    ]
+  },
+
   './numpy/__init__.js' : {
+
     path : trinketConfig.prefix('/components/skulpt_numpy/dist/numpy/__init__.js'),
   },
   './numpy/random/__init__.js' : {
