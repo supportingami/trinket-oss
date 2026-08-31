@@ -1065,11 +1065,13 @@ window.TrinketAPI = {
     if (previous) {
       previous.attempt += 1;
 
-      patch = window.JsDiff.createPatch(
-        "attempt" + previous.attempt
-        , previous.code
-        , code
-      );
+      if (window.JsDiff && typeof window.JsDiff.createPatch === 'function') {
+        patch = window.JsDiff.createPatch(
+          "attempt" + previous.attempt
+          , previous.code
+          , code
+        );
+      }
 
       eventData = {
         session        : this._sessionId
@@ -1082,7 +1084,7 @@ window.TrinketAPI = {
         , elapsed      : Date.now() - previous.time
         , totalElapsed : Date.now() - previous.firstTime
         // don't include the header info in the patch, since it isn't useful here
-        , delta        : patch.substr(patch.indexOf('@'))
+        , delta        : patch && patch.indexOf('@') !== -1 ? patch.substr(patch.indexOf('@')) : undefined
         , attempt      : previous.attempt
       };
 

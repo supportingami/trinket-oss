@@ -4,15 +4,20 @@ FROM python:3.10-bullseye
 # ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt clean && apt-get update -y
-RUN apt install -y software-properties-common fontconfig locales-all build-essential
+RUN apt install -y software-properties-common fontconfig locales-all build-essential pkg-config libgeos-dev libxml2-dev libxslt1-dev libcairo2 libpango-1.0-0 libgdk-pixbuf-2.0-0 shared-mime-info
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 RUN apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Upgrade pip, setuptools, and wheel for pyproject.toml build support
+RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
+
 COPY ./requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt --ignore-installed
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
 #COPY ./requirements-deps.txt /tmp/
 #RUN pip3 install -r /tmp/requirements-deps.txt --ignore-installed
 RUN bokeh sampledata

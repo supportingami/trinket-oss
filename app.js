@@ -303,6 +303,53 @@ const init = async () => {
   // Register routes
   server.route(config.routes);
 
+  // Proxy generated Python/R chart files to python-runner service
+  const proxyGeneratedFiles = (request, h) => {
+    return new Promise((resolve) => {
+      const runnerHost = process.env.PYTHON_RUNNER_HOST || 'http://python-runner:8080';
+      const targetUrl = `${runnerHost}${request.path}`;
+      const http = require('http');
+
+      const req = http.get(targetUrl, (res) => {
+        if (res.statusCode !== 200) {
+          return resolve(h.response('Not Found').code(res.statusCode));
+        }
+
+        const chunks = [];
+        res.on('data', (chunk) => chunks.push(chunk));
+        res.on('end', () => {
+          const buffer = Buffer.concat(chunks);
+          const contentType = res.headers['content-type'] || 'application/octet-stream';
+          const response = h.response(buffer)
+            .type(contentType)
+            .header('Cache-Control', 'public, max-age=3600, immutable');
+          resolve(response);
+        });
+      });
+
+      req.on('error', (err) => {
+        log.error('Proxy error for generated files:', err.message);
+        resolve(h.response('Runner unavailable').code(502));
+      });
+    });
+  };
+
+  server.route([
+    {
+      method: 'GET',
+      path: '/python3-generated/{path*}',
+      handler: proxyGeneratedFiles,
+      config: { auth: false }
+    },
+    {
+      method: 'GET',
+      path: '/python-generated/{path*}',
+      handler: proxyGeneratedFiles,
+      config: { auth: false }
+    }
+  ]);
+
+
   // Start the server
   if (config.app.start) {
     await server.start();

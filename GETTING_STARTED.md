@@ -100,9 +100,10 @@ trinket-oss/
 | Service | Port | Description |
 |---------|------|-------------|
 | app | 3000 | Trinket web application |
-| mongodb | 17017 | MongoDB database |
-| redis | 16379 | Redis (optional - uses in-memory fallback if disabled) |
-| nginx | 443 | HTTPS proxy (optional) |
+| python-runner | 8080 | Python 3 & Pygal backend runner (WebSockets & generated charts) |
+| mongodb | 17017 | MongoDB database (internal: 27017) |
+| redis | 16379 | Redis cache (internal: 6379) |
+
 
 ## Troubleshooting
 
@@ -193,31 +194,28 @@ aws:
   endpoint: 'https://minio.example.com'
 ```
 
-## Server-Side Languages
+## Server-Side Languages (Python 3 & Pygal)
 
-Python 3, Java, R, and Pygame require backend services. See [serverside/README.md](serverside/README.md) for setup.
+Python 3 execution (with Pygal, NumPy, Pandas, Matplotlib, SciPy) is handled by the `python-runner` service.
 
-Quick start:
+### Local Development
+In local development, the `python-runner` service is already included in the root [docker-compose.yml](docker-compose.yml). Starting the stack launches both the web app and the Python runner:
 ```bash
-cd serverside
-docker compose --profile python3 up --build
+docker-compose up --build
 ```
+Visit **http://localhost:3000** — Python 3 trinkets and Pygal charting work out of the box.
 
-Enable in config:
-```yaml
-features:
-  trinkets:
-    python3: true
-    java: true
-    R: true
-    pygame: true
-
-app:
-  serverside:
-    python3:
-      api:
-        default: 'http://localhost:8080/python3'
+### Production / Portainer
+In your Portainer stack or `.env`, set:
+```ini
+ENABLE_PYTHON3=true
+PYTHON3_API_URL=https://your-domain.com/python3
 ```
+And deploy [docker-compose.prod.yml](docker-compose.prod.yml), which runs the `app` and `python-runner` containers.
+
+*(Optional legacy backends for Java SE 8, R, and Pygame VNC can also be run from `serverside/` if needed; see [serverside/README.md](serverside/README.md)).*
+
+
 
 ## Google OAuth
 

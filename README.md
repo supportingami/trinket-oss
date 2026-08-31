@@ -104,6 +104,9 @@ To deploy in production:
 | `MAIL_PORT` | Optional | `587` | SMTP server port. |
 | `MAIL_USER` | Optional | *None* | SMTP server username (defaults to `resend` if `RESEND_API_KEY` is provided). |
 | `MAIL_PASS` | Optional | *None* | SMTP server password (ignored if `RESEND_API_KEY` is provided). |
+| `ENABLE_PYTHON3` | Optional | `false` | Set to `true` to enable Python 3 server-side execution and Pygal support. |
+| `PYTHON3_API_URL` | Optional | *None* | WebSocket API endpoint for the Python 3 runner (e.g. `https://your-domain.com/python3`). |
+
 
 
 To run the production environment:

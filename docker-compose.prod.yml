@@ -29,6 +29,8 @@ services:
       - APP_EMBED_SKULPT_MIN=${APP_EMBED_SKULPT_MIN:-true}
       - RESEND_API_KEY=${RESEND_API_KEY}
       - MAIL_FROM=${MAIL_FROM}
+      - ENABLE_PYTHON3=${ENABLE_PYTHON3:-false}
+      - PYTHON3_API_URL=${PYTHON3_API_URL}
 
     restart: unless-stopped
     logging:
@@ -83,9 +85,31 @@ services:
     networks:
       - trinket
 
+  # ---------------------------------------------------------------------------
+  # Consolidated Python 3 & Pygal Execution Runner (Single Container)
+  # ---------------------------------------------------------------------------
+  python-runner:
+    build: ./serverside/python-runner
+    image: ghcr.io/supportingami/trinket-oss/python-runner:latest
+    container_name: trinket-python-runner
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=production
+    mem_limit: 500m
+    cpus: 1.0
+    pids_limit: 50
+    networks:
+      - trinket
+    restart: unless-stopped
+
 networks:
   trinket:
     driver: bridge
 
 volumes:
   mongodb_prod_data:
+
+
+
