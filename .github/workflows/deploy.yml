@@ -1,4 +1,4 @@
-name: Build and Push Trinket Image
+name: Build and Push Trinket Images
 
 on:
   push:
@@ -14,6 +14,16 @@ jobs:
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: app
+            context: .
+            tag-suffix: app
+          - name: python-runner
+            context: ./serverside/python-runner
+            tag-suffix: python-runner
 
     steps:
       - name: Checkout Code
@@ -29,11 +39,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image (${{ matrix.name }})
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ${{ matrix.context }}
           push: true
-          tags: ghcr.io/${{ github.repository }}/app:latest
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.tag-suffix }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+

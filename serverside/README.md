@@ -1,6 +1,11 @@
 # Server-side Trinket Types
 
+> [!NOTE]
+> **Python 3 & Pygal are already included in the root stack.**
+> If you are running Python 3 (with Pygal, Cairo, NumPy, Matplotlib), you do **not** need to use this directory directly. Simply run `docker-compose up` from the project root. This directory contains the consolidated `serverside/python-runner` as well as optional legacy multi-container setups for other languages (Java, R, Pygame).
+
 This directory contains the backend services for server-side trinket types (Python 3, Java, R, Pygame). These run actual language interpreters in Docker containers, allowing execution of code that can't run in the browser.
+
 
 ## Architecture
 
@@ -49,6 +54,14 @@ This directory contains the backend services for server-side trinket types (Pyth
 
 ## Quick Start
 
+### Consolidated Single-Image Runner (Production / Portainer Recommended)
+For production deployments, the Python 3 runner is consolidated into a single container image (`serverside/python-runner`):
+```bash
+docker build -t ghcr.io/supportingami/trinket-oss/python-runner:latest ./serverside/python-runner
+docker run -p 8080:8080 ghcr.io/supportingami/trinket-oss/python-runner:latest
+```
+
+### Multi-Language Development Profiles (Local Development)
 ```bash
 cd serverside
 
@@ -61,6 +74,7 @@ docker compose --profile python3 --profile java up --build
 # Start all languages
 docker compose --profile python3 --profile java --profile r --profile pygame up --build
 ```
+
 
 The services will be available at `http://localhost:8080`.
 

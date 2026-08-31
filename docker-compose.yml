@@ -9,6 +9,7 @@ services:
       - .:/usr/local/node/trinket
       - node_modules:/usr/local/node/trinket/node_modules
       - public_components:/usr/local/node/trinket/public/components
+      - public_css:/usr/local/node/trinket/public/css
     networks:
       - trinket
     depends_on:
@@ -16,7 +17,8 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
-    command: bash -c "node scripts/generate-config.js && npm run build:css && pm2-docker start app.js"
+    command: bash -c "node scripts/generate-config.js && pm2-docker start app.js"
+
     environment:
       - NODE_ENV=development
       - SESSION_COOKIE_PASSWORD=${SESSION_COOKIE_PASSWORD}
@@ -34,6 +36,27 @@ services:
       - REDIS_PORT=${REDIS_PORT:-6379}
       - REDIS_PASS=${REDIS_PASS}
       - REDIS_DB=${REDIS_DB:-0}
+      - ENABLE_PYTHON3=${ENABLE_PYTHON3:-true}
+      - PYTHON3_API_URL=${PYTHON3_API_URL:-http://localhost:8080/python3}
+
+  # Python 3 & Pygal Server-Side Runner
+  python-runner:
+    build: ./serverside/python-runner
+    image: trinket/python-runner:latest
+    container_name: trinket-python-runner
+    ports:
+      - 8080:8080
+    volumes:
+      - ./serverside/python-runner:/home/trinket
+      - /home/trinket/node_modules
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+    networks:
+      - trinket
+    restart: unless-stopped
+
+
   redis:
     image: redis:alpine
     ports:
@@ -69,4 +92,6 @@ volumes:
   shared-cache:
   node_modules:
   public_components:
+  public_css:
   mongodb_data:
+
