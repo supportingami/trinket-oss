@@ -89,7 +89,6 @@ services:
   # Consolidated Python 3 & Pygal Execution Runner (Single Container)
   # ---------------------------------------------------------------------------
   python-runner:
-    build: ./serverside/python-runner
     image: ghcr.io/supportingami/trinket-oss/python-runner:latest
     container_name: trinket-python-runner
     ports:
@@ -97,6 +96,7 @@ services:
     environment:
       - PORT=8080
       - NODE_ENV=production
+
     mem_limit: 500m
     cpus: 1.0
     pids_limit: 50
