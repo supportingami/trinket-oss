@@ -68,6 +68,28 @@ const appEmbedSkulptLocal = process.env.APP_EMBED_SKULPT_LOCAL !== undefined
   : (awsCdnHost === '');
 const appEmbedSkulptMin = process.env.APP_EMBED_SKULPT_MIN !== 'false';
 
+const enablePython = process.env.ENABLE_PYTHON !== 'false';
+const enableHtml = process.env.ENABLE_HTML !== 'false';
+const enableBlocks = process.env.ENABLE_BLOCKS !== 'false';
+const enableGlowscript = process.env.ENABLE_GLOWSCRIPT !== 'false';
+const enableGlowscriptBlocks = process.env.ENABLE_GLOWSCRIPT_BLOCKS !== 'false';
+const enableConsole = process.env.ENABLE_CONSOLE !== 'false';
+const enableMusic = process.env.ENABLE_MUSIC !== 'false';
+
+const enablePython3 = process.env.ENABLE_PYTHON3 === 'true' || process.env.FEATURE_PYTHON3 === 'true';
+const enableJava = process.env.ENABLE_JAVA === 'true' || process.env.FEATURE_JAVA === 'true';
+const enableR = process.env.ENABLE_R === 'true' || process.env.FEATURE_R === 'true';
+const enablePygame = process.env.ENABLE_PYGAME === 'true' || process.env.FEATURE_PYGAME === 'true';
+
+const python3ApiUrl = process.env.PYTHON3_API_URL || process.env.SERVERSIDE_PYTHON3_API;
+const javaApiUrl = process.env.JAVA_API_URL || process.env.SERVERSIDE_JAVA_API;
+const rApiUrl = process.env.R_API_URL || process.env.SERVERSIDE_R_API;
+const pygameApiUrl = process.env.PYGAME_API_URL || process.env.SERVERSIDE_PYGAME_API;
+const serversideStatsBase = process.env.SERVERSIDE_STATS_BASE;
+
+
+const hasServersideConfig = python3ApiUrl || javaApiUrl || rApiUrl || pygameApiUrl || serversideStatsBase;
+
 const newLines = [];
 
 for (let i = 0; i < lines.length; i++) {
@@ -197,6 +219,31 @@ for (let i = 0; i < lines.length; i++) {
     }
     if (trimmed.startsWith('min:')) {
       newLines.push(line.replace(/min:.*/, `min: ${appEmbedSkulptMin}`));
+      if (hasServersideConfig) {
+        newLines.push('');
+        newLines.push('  serverside:');
+        if (serversideStatsBase) newLines.push(`    statsBase: '${serversideStatsBase}'`);
+        if (python3ApiUrl) {
+          newLines.push('    python3:');
+          newLines.push('      api:');
+          newLines.push(`        default: '${python3ApiUrl}'`);
+        }
+        if (javaApiUrl) {
+          newLines.push('    java8:');
+          newLines.push('      api:');
+          newLines.push(`        default: '${javaApiUrl}'`);
+        }
+        if (rApiUrl) {
+          newLines.push('    r3:');
+          newLines.push('      api:');
+          newLines.push(`        default: '${rApiUrl}'`);
+        }
+        if (pygameApiUrl) {
+          newLines.push('    pygame:');
+          newLines.push('      api:');
+          newLines.push(`        default: '${pygameApiUrl}'`);
+        }
+      }
       continue;
     }
   }
@@ -237,5 +284,24 @@ for (let i = 0; i < lines.length; i++) {
   newLines.push(line);
 }
 
+newLines.push('');
+newLines.push('features:');
+
+newLines.push('  trinkets:');
+if (enablePython) newLines.push('    python: true');
+if (enableHtml) newLines.push('    html: true');
+if (enableBlocks) newLines.push('    blocks: true');
+if (enableGlowscript) newLines.push('    glowscript: true');
+if (enableGlowscriptBlocks) newLines.push('    glowscript-blocks: true');
+if (enableConsole) newLines.push('    console: true');
+if (enableMusic) newLines.push('    music: true');
+if (enablePython3) newLines.push('    python3: true');
+if (enableJava) newLines.push('    java: true');
+if (enableR) newLines.push('    R: true');
+if (enablePygame) newLines.push('    pygame: true');
+
+
 fs.writeFileSync(outputPath, newLines.join('\n'), 'utf8');
 console.log('Successfully generated config/local.yaml');
+
+
