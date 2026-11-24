@@ -1,6 +1,6 @@
 # Fork notes — `supportingami/trinket-oss` vs `trinketapp/trinket-oss`
 
-This repo is a **fork, not detached**.
+Treat this repo as **detached** for all intents and purposes: no upstream remote, no upstream PRs, no upstream issues — everything targets `origin`. (Technically a GitHub fork, but no agent workflow may reference `trinketapp/trinket-oss` as a target — see `AGENTS.md §9`.)
 
 * `origin` = `https://github.com/supportingami/trinket-oss.git` (fetch+push). No `upstream` remote locally (removed to prevent accidental PRs to `trinketapp/trinket-oss` — see `AGENTS.md §9`).
 * `32` commits ahead of `upstream/main` as of 2026-11-24 (measured before remote removal via `git rev-list --count upstream/main..main`). No behind-divergence fetched.

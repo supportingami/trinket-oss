@@ -112,11 +112,13 @@ Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWS
 * AngularJS 1.x + Foundation 5 + Ace + jq-console — legacy stack, keep changes minimal and compatible.
 * CDN libs (cdnjs, googleapis) are pinned in templates — don't upgrade without checking `COMPONENTS.md`.
 
-## 9. Pull Requests — always our fork
+## 9. Pull Requests & Issues — this repo is detached, always our fork
+
+Treat this repo as **detached** for all intents and purposes. `trinketapp/trinket-oss` does not exist in any agent workflow: never open, comment on, or close issues, PRs, or discussions there, never push branches there, and never reference it as a target for work.
 
 * Only `origin` (`supportingami/trinket-oss`) should exist locally — `git remote -v` must show only origin. Do not add `trinketapp/trinket-oss` as a remote.
 * Create branches from `main` and open PRs as `supportingami/trinket-oss:main <- <branch>`, e.g. `gh pr create --repo supportingami/trinket-oss --base main --head <branch>`.
-* Never use `--repo trinketapp/trinket-oss`, never add/push to upstream.
+* Never use `--repo trinketapp/trinket-oss`, never add/push to upstream, never file or triage upstream issues — no tickets or PRs against the original repo, ever.
 * GitHub cannot block cross-fork PRs server-side (we don't control upstream), so this file is the enforcement. If you need to compare with upstream, add it temporarily read-only and remove it after (`git remote add upstream https://github.com/trinketapp/trinket-oss.git --no-tags; git fetch upstream; ...; git remote remove upstream`).
 * Every PR must be documented in `FORK.md`: add a row to the PR table (`## PRs merged`) with number, title, branch, and merge date, and update the grouped diff summary (`## What differs from upstream`) plus the commit-list regeneration note if the change set warrants it. Do this in the same branch before merging — never land a PR without its `FORK.md` entry.
 
