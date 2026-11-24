@@ -1,6 +1,6 @@
 {
   "name": "trinket",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "the key to open education",
   "main": "app/app.js",
   "directories": {
