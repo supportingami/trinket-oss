@@ -33,6 +33,7 @@ Full file diff (requires temporary upstream): `git remote add upstream https://g
 | [#1](https://github.com/supportingami/trinket-oss/pull/1) | feat: config generator | `feat/config-generator` | 2026-06-16 |
 | [#2](https://github.com/supportingami/trinket-oss/pull/2) | feat: pygal js integration | `feat/pygal-js` | 2026-08-31 |
 | [#3](https://github.com/supportingami/trinket-oss/pull/3) | feat: unified backend server | `feat/unified-backend-server` | 2026-08-31 |
+| [#4](https://github.com/supportingami/trinket-oss/pull/4) | feat: zero-server urllib with optional Cloudflare CORS proxy | `feat/urllib-cors-proxy` | open |
 
 PR bodies were minimal (`#1` empty, `#2` “Integrate pygal JS into docker image”, `#3` “add single container image for running backend server”).
 
