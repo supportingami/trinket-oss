@@ -12,6 +12,9 @@ app:
     hostname: localhost
     port: 3000
 
+  # Footer "Open Source on GitHub" link — point at your own fork.
+  githubUrl: 'https://github.com/trinketapp/trinket-oss'
+
   plugins:
     session:
       cookieOptions:

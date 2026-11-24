@@ -22,8 +22,8 @@ Canonical lang list: `config/constants.js:4-16`:
 
 ## 2. How we deploy / host
 
-* CI (`.github/workflows/deploy.yml:1-50`) is **build-only**: on push to `main` it builds `app` (from repo root `Dockerfile`) and `python-runner` (from `serverside/python-runner`) and pushes `ghcr.io/supportingami/trinket-oss/{app,python-runner}:latest`. No SSH, webhook, Portainer, or Watchtower deploy step.
-* Prod deploy is **manual**: on the host that serves `trinket.samicharity.co.uk`, run `docker-compose -f docker-compose.prod.yml up -d` which pulls those `:latest` images (`docker-compose.prod.yml:6,93`). Reverse proxy maps `/ → trinket:3000`, `/python3/ → python-runner:8080` (see `INTEGRATION_FINDINGS.md:141-150`).
+* CI (`.github/workflows/deploy.yml`) is **build-only**: on push to `main` it reads `version` from root `package.json`, then builds `app` (from repo root `Dockerfile`) and `python-runner` (from `serverside/python-runner`) and pushes both `ghcr.io/supportingami/trinket-oss/{app,python-runner}:latest` and `:{<package.json version>}` (single version source for both images so a deploy set stays coherent). No SSH, webhook, Portainer, or Watchtower deploy step.
+* Prod deploy is **manual**: on the host run `docker-compose -f docker-compose.prod.yml up -d` (defaults to `:latest`) or pin a version for deploy/rollback, e.g. `IMAGE_TAG=1.2.0 docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d` (`docker-compose.prod.yml` uses `image: ...:${IMAGE_TAG:-latest}`). Reverse proxy maps `/ → trinket:3000`, `/python3/ → python-runner:8080` (see `INTEGRATION_FINDINGS.md:141-150`). Check what's deployed with `docker image inspect ghcr.io/supportingami/trinket-oss/app:<tag>` or the GHCR package versions list.
 * Production host is injected at container startup via `APP_URL_HOSTNAME` / `APP_URL_PROTOCOL` / `APP_URL_PORT` → `config/local.yaml:app.url` via `scripts/generate-config.js:35-40`.
 * Committed defaults are `localhost` (`docker-compose*.yml`) and `trinket.dev` (`config/default.yaml:28-33`). Do not hardcode the prod hostname in code — use relative URLs (`/embed/...`) or `APP_URL_HOSTNAME` in docs.
 * No `.env` files are committed. `config/local.yaml` is gitignored (see `.gitignore:24`). Never commit secrets.
@@ -96,7 +96,7 @@ Skulpt specifics:
 * UX lists: `app.autorun`, `app.outputOnly`, `app.toggleCode`, `app.downloadable`, `app.uploadable:[blocks,glowscript-blocks]`, `app.configurable`, `app.nodraft:[console]`, `app.notShareable:[pygame]`, `app.hideGeneratedCode`, `app.runOption.{python,python3,R}`, `app.glowscript.{defaultVersion:3.2,blocksVersion:2.7}` (`default.yaml:239-309`)
 * `sandbox.mode: local`, `sandbox.local.permissions` (never add `allow-same-origin`)
 
-Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWSCRIPT|... !=='false'` (default on), `ENABLE_PYTHON3|JAVA|R|PYGAME ==='true'` (default off), `APP_EMBED_SKULPT_LOCAL/MIN`, `APP_EMBED_PROXY` (CORS proxy URL, empty = direct), `AWS_CDN_HOST`.
+Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWSCRIPT|... !=='false'` (default on), `ENABLE_PYTHON3|JAVA|R|PYGAME ==='true'` (default off), `APP_EMBED_SKULPT_LOCAL/MIN`, `APP_EMBED_PROXY` (CORS proxy URL, empty = direct), `APP_GITHUB_URL` (footer link, default upstream repo), `AWS_CDN_HOST`.
 
 ## 7. Build / dev (no backend needed)
 
@@ -109,6 +109,7 @@ Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWS
 ## 8. Conventions
 
 * From `CONTRIBUTING.md:22-76`: 2-space indent, single quotes, semicolons, <120 char, `npm test` before PR.
+* Versioning: root `package.json:version` is the single source of truth for image tags. **Bump it once per PR, not per commit**: `minor` for new features/functionality, `patch` for docs or bug fixes, `major` for breaking changes. The deploy workflow tags both `app` and `python-runner` images with that exact version, so never tag releases with git tags or commit SHAs — just bump `package.json`. `serverside/python-runner/package.json` is not used for tagging.
 * AngularJS 1.x + Foundation 5 + Ace + jq-console — legacy stack, keep changes minimal and compatible.
 * CDN libs (cdnjs, googleapis) are pinned in templates — don't upgrade without checking `COMPONENTS.md`.
 

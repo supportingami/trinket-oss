@@ -3,7 +3,9 @@ services:
     # Run the image pre-built from github
     # This should be marked as public within the github packages configuration
     # or credentials provided to access
-    image: ghcr.io/supportingami/trinket-oss/app:latest
+    # Pin to a released version for rollback: IMAGE_TAG=1.2.0 docker-compose -f docker-compose.prod.yml up -d
+    # Defaults to :latest (whatever main last built).
+    image: ghcr.io/supportingami/trinket-oss/app:${IMAGE_TAG:-latest}
     ports:
       - 3000:3000
     container_name: trinket
@@ -25,6 +27,7 @@ services:
       - REDIS_PASS=${REDIS_PASS}
       - REDIS_DB=${REDIS_DB:-0}
       - AWS_CDN_HOST=${AWS_CDN_HOST}
+      - APP_GITHUB_URL=${APP_GITHUB_URL}
       - APP_EMBED_SKULPT_LOCAL=${APP_EMBED_SKULPT_LOCAL:-true}
       - APP_EMBED_SKULPT_MIN=${APP_EMBED_SKULPT_MIN:-true}
       - APP_EMBED_PROXY=${APP_EMBED_PROXY}
@@ -90,7 +93,7 @@ services:
   # Consolidated Python 3 & Pygal Execution Runner (Single Container)
   # ---------------------------------------------------------------------------
   python-runner:
-    image: ghcr.io/supportingami/trinket-oss/python-runner:latest
+    image: ghcr.io/supportingami/trinket-oss/python-runner:${IMAGE_TAG:-latest}
     container_name: trinket-python-runner
     ports:
       - "8080:8080"
