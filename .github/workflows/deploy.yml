@@ -3,6 +3,10 @@ name: Build and Push Trinket Images
 on:
   push:
     branches: [main]
+    # Only deploy on version bumps. This prevents re-pushing 
+    # the same version tag when code changes without a version bump.
+    paths:
+      - 'package.json'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
