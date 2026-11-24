@@ -1,0 +1,17 @@
+name = "trinket-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# Optional: restrict which upstream APIs students may call.
+# Default is "*" (allow all https upstreams). Use bare domains —
+# "omdbapi.com" matches "omdbapi.com", "www.omdbapi.com", and subdomains.
+# Examples:
+#   ALLOWED_HOSTS = "omdbapi.com,api.nasa.gov"
+#   ALLOWED_HOSTS = "https://api.example.com/v1/"
+ALLOWED_HOSTS = "*"
+
+# Only these sites may USE this proxy (your prod site).
+# Browser sends Origin; anything else gets 403.
+# Example: TRINKET_ORIGINS = "https://trinket.samicharity.co.uk"
+TRINKET_ORIGINS = "https://trinket.samicharity.co.uk"

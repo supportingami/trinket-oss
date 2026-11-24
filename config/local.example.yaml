@@ -25,6 +25,13 @@ app:
       local: true
       min: true
 
+    # Optional CORS proxy for Skulpt `urllib.request.urlopen` (see serverside/cors-proxy/README.md).
+    # Empty (default) = direct client-side request, zero-server friendly.
+    # Works for APIs sending `Access-Control-Allow-Origin: *` (e.g. OMDB).
+    # Set to your Cloudflare Worker URL (no trailing slash) to support non-CORS APIs:
+    # proxy: 'https://trinket-proxy.<you>.workers.dev'
+    proxy: ''
+
   # =============================================================================
   # OPTIONAL: Email (for password reset)
   # =============================================================================

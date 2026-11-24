@@ -215,6 +215,21 @@ And deploy [docker-compose.prod.yml](docker-compose.prod.yml), which runs the `a
 
 *(Optional legacy backends for Java SE 8, R, and Pygame VNC can also be run from `serverside/` if needed; see [serverside/README.md](serverside/README.md)).*
 
+## External API calls (`urllib.request`)
+
+Browser Python (`python` trinkets, Skulpt) runs entirely client-side. `urllib.request.urlopen` (`public/js/embed/python.js`) therefore goes through the browser's `XMLHttpRequest`:
+
+- If `app.embed.proxy` is empty (default), the request goes direct. Zero servers required. Works for APIs that send `Access-Control-Allow-Origin: *` (verified for OMDB: `curl -H "Origin: https://example.com" "https://www.omdbapi.com/?apikey=...&t=Jaws"` returns `access-control-allow-origin: *`).
+- If the target API has no CORS headers, deploy the serverless proxy in [`serverside/cors-proxy/`](serverside/cors-proxy/README.md) (Cloudflare Worker, free tier) and set:
+
+```yaml
+app:
+  embed:
+    proxy: 'https://trinket-proxy.<you>.workers.dev'
+```
+
+The client tries `{proxy}?url=<encoded-target>` first, then falls back to direct. Always use `https://` target URLs in trinkets (`http://` is blocked as mixed-content on `https` pages).
+
 
 
 ## Google OAuth
