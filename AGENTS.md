@@ -109,7 +109,7 @@ Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWS
 ## 8. Conventions
 
 * From `CONTRIBUTING.md:22-76`: 2-space indent, single quotes, semicolons, <120 char, `npm test` before PR.
-* Versioning: root `package.json:version` is the single source of truth for image tags. **Bump it on every change that affects a deployed image** (any tracked file, since `app` builds from repo-root context): `patch` for fixes/chores, `minor` for features, `major` for breaking changes. The deploy workflow tags both `app` and `python-runner` images with that exact version, so never tag releases with git tags or commit SHAs — just bump `package.json`. `serverside/python-runner/package.json` is not used for tagging.
+* Versioning: root `package.json:version` is the single source of truth for image tags. **Bump it once per PR, not per commit**: `minor` for new features/functionality, `patch` for docs or bug fixes, `major` for breaking changes. The deploy workflow tags both `app` and `python-runner` images with that exact version, so never tag releases with git tags or commit SHAs — just bump `package.json`. `serverside/python-runner/package.json` is not used for tagging.
 * AngularJS 1.x + Foundation 5 + Ace + jq-console — legacy stack, keep changes minimal and compatible.
 * CDN libs (cdnjs, googleapis) are pinned in templates — don't upgrade without checking `COMPONENTS.md`.
 
