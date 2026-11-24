@@ -36,6 +36,7 @@ Full file diff (requires temporary upstream): `git remote add upstream https://g
 | [#4](https://github.com/supportingami/trinket-oss/pull/4) | feat: zero-server urllib with optional Cloudflare CORS proxy | `feat/urllib-cors-proxy` | open |
 | [#5](https://github.com/supportingami/trinket-oss/pull/5) | feat: versioned image tags and visible app version | `feat/versioned-deploys` | open |
 | [#6](https://github.com/supportingami/trinket-oss/pull/6) | fix: python-runner base bullseye -> bookworm | `fix/python-runner-bookworm` | open |
+| [#7](https://github.com/supportingami/trinket-oss/pull/7) | fix: fail fast so app + runner versions stay in lockstep | `fix/ci-fail-fast` | open |
 
 PR bodies were minimal (`#1` empty, `#2` “Integrate pygal JS into docker image”, `#3` “add single container image for running backend server”).
 
