@@ -96,7 +96,7 @@ Skulpt specifics:
 * UX lists: `app.autorun`, `app.outputOnly`, `app.toggleCode`, `app.downloadable`, `app.uploadable:[blocks,glowscript-blocks]`, `app.configurable`, `app.nodraft:[console]`, `app.notShareable:[pygame]`, `app.hideGeneratedCode`, `app.runOption.{python,python3,R}`, `app.glowscript.{defaultVersion:3.2,blocksVersion:2.7}` (`default.yaml:239-309`)
 * `sandbox.mode: local`, `sandbox.local.permissions` (never add `allow-same-origin`)
 
-Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWSCRIPT|... !=='false'` (default on), `ENABLE_PYTHON3|JAVA|R|PYGAME ==='true'` (default off), `APP_EMBED_SKULPT_LOCAL/MIN`, `AWS_CDN_HOST`.
+Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWSCRIPT|... !=='false'` (default on), `ENABLE_PYTHON3|JAVA|R|PYGAME ==='true'` (default off), `APP_EMBED_SKULPT_LOCAL/MIN`, `APP_EMBED_PROXY` (CORS proxy URL, empty = direct), `AWS_CDN_HOST`.
 
 ## 7. Build / dev (no backend needed)
 
@@ -118,6 +118,7 @@ Env → YAML: `scripts/generate-config.js` maps `ENABLE_PYTHON|HTML|BLOCKS|GLOWS
 * Create branches from `main` and open PRs as `supportingami/trinket-oss:main <- <branch>`, e.g. `gh pr create --repo supportingami/trinket-oss --base main --head <branch>`.
 * Never use `--repo trinketapp/trinket-oss`, never add/push to upstream.
 * GitHub cannot block cross-fork PRs server-side (we don't control upstream), so this file is the enforcement. If you need to compare with upstream, add it temporarily read-only and remove it after (`git remote add upstream https://github.com/trinketapp/trinket-oss.git --no-tags; git fetch upstream; ...; git remote remove upstream`).
+* Every PR must be documented in `FORK.md`: add a row to the PR table (`## PRs merged`) with number, title, branch, and merge date, and update the grouped diff summary (`## What differs from upstream`) plus the commit-list regeneration note if the change set warrants it. Do this in the same branch before merging — never land a PR without its `FORK.md` entry.
 
 ## 10. Do / Don't for agents
 
@@ -127,6 +128,6 @@ DO:
 * Keep `outputOnly` / `snapshot` paths working (used for static rendering).
 
 DON'T:
-* Touch `app.js`, `lib/controllers/`, `lib/models/`, `lib/auth/`, `lib/util/{helpers,routeParser,store*,queues,mailer}`, `lib/workers/`, `config/{routes,api_routes,db,redis}.js`, `serverside/**`, `lib/views/embed/{python3,java,R,pygame}.html`, `app.js:307-350` generated-file proxy, or `features.trinkets.{python3,java,R,pygame}`.
+* Touch `app.js`, `lib/controllers/`, `lib/models/`, `lib/auth/`, `lib/util/{helpers,routeParser,store*,queues,mailer}`, `lib/workers/`, `config/{routes,api_routes,db,redis}.js`, `lib/views/embed/{python3,java,R,pygame}.html`, `app.js:307-350` generated-file proxy, or `features.trinkets.{python3,java,R,pygame}`. `serverside/**` is out of scope **except** `serverside/cors-proxy/` (serverless CORS proxy for the client-side Skulpt `urllib` shim — no runner, no WebSocket, no DB).
 * Enable server-side runners, add `socket.io` to client langs, or add `allow-same-origin` to sandbox.
 * Commit `config/local.yaml`, `.env`, `public/components/`, or hardcode production hostnames/secrets.

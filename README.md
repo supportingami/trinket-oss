@@ -98,6 +98,7 @@ To deploy in production:
 | `AWS_CDN_HOST` | Optional | *None* | Custom CDN host URL (e.g. `https://your-cdn.example.com`). If not set, CDN requests fall back to loading Skulpt assets locally. |
 | `APP_EMBED_SKULPT_LOCAL` | Optional | `true` | Set to `true` to load Skulpt assets locally from the application container. Defaults to `true` unless `AWS_CDN_HOST` is specified. |
 | `APP_EMBED_SKULPT_MIN` | Optional | `true` | Set to `true` to load the minified version of local Skulpt core assets. |
+| `APP_EMBED_PROXY` | Optional | *Empty* | CORS proxy for Skulpt `urllib.request.urlopen` (e.g. `https://trinket-proxy.<you>.workers.dev`, no trailing slash). Empty = direct client-side request, works for APIs sending `Access-Control-Allow-Origin: *` (e.g. OMDB). See `serverside/cors-proxy/README.md`. |
 | `RESEND_API_KEY` | Optional | *None* | Resend API Key for mail. When set, SMTP defaults to `smtp.resend.com`, port `587`, and user `resend` unless overridden. |
 | `MAIL_FROM` | Optional | *None* | Sender email address for mail (must be verified domain or email with your provider). |
 | `MAIL_HOST` | Optional | *None* | SMTP server host (defaults to `smtp.resend.com` if `RESEND_API_KEY` is provided). |

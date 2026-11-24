@@ -308,7 +308,13 @@ app:
     defaultVersion: '3.2'
     blocksVersion: '2.7'
   embed:
-    proxy: 'http://127.0.0.1/proxy'
+    # Optional CORS proxy for Skulpt `urllib.request.urlopen` (public/js/embed/python.js).
+    # When set, requests go to `{proxy}?url=<encoded-target>` first, then fall back
+    # to a direct client-side request. When empty (default), requests go direct —
+    # zero-server friendly, works for APIs sending `Access-Control-Allow-Origin: *`
+    # (e.g. OMDB). Only set this if you need to reach non-CORS APIs.
+    # Example serverless worker: 'https://your-worker.workers.dev'
+    proxy: ''
     skulpt:
       local: false # when true pulls from bower install instead of cdn
       min: false # when true uses minified local copy of skulpt core

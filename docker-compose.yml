@@ -38,6 +38,7 @@ services:
       - REDIS_DB=${REDIS_DB:-0}
       - ENABLE_PYTHON3=${ENABLE_PYTHON3:-true}
       - PYTHON3_API_URL=${PYTHON3_API_URL:-http://localhost:8080/python3}
+      - APP_EMBED_PROXY=${APP_EMBED_PROXY}
 
   # Python 3 & Pygal Server-Side Runner
   python-runner:

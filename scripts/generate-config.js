@@ -67,6 +67,7 @@ const appEmbedSkulptLocal = process.env.APP_EMBED_SKULPT_LOCAL !== undefined
   ? (process.env.APP_EMBED_SKULPT_LOCAL === 'true')
   : (awsCdnHost === '');
 const appEmbedSkulptMin = process.env.APP_EMBED_SKULPT_MIN !== 'false';
+const appEmbedProxy = process.env.APP_EMBED_PROXY;
 
 const enablePython = process.env.ENABLE_PYTHON !== 'false';
 const enableHtml = process.env.ENABLE_HTML !== 'false';
@@ -244,6 +245,15 @@ for (let i = 0; i < lines.length; i++) {
           newLines.push(`        default: '${pygameApiUrl}'`);
         }
       }
+      continue;
+    }
+  }
+
+  // app.embed.proxy (4-space indented `proxy:` under `embed:`). Pass through
+  // example default ('') unless APP_EMBED_PROXY is set.
+  if (/^ {4}proxy:/.test(line)) {
+    if (appEmbedProxy !== undefined) {
+      newLines.push(line.replace(/proxy:.*/, `proxy: '${appEmbedProxy}'`));
       continue;
     }
   }

@@ -193,31 +193,62 @@ function onAfterImport(library) {
       }
       break;
     case 'urllib.request':
-      if ($('#proxy').val()) {
-        var urllibResponses = {};
-        var mod = Sk.sysmodules.mp$subscript(library);
-        mod.$d.urlopen.func_code = function(url, data, timeout) {
-          if (urllibResponses[url.v] === undefined) {
-            // wrap url with proxyied address
-            var proxy = $('#proxy').val() + '?url=' + encodeURIComponent(url.v);
+      // Zero-server friendly: use CORS proxy if configured (app.embed.proxy),
+      // otherwise fall back to a direct client-side request (works for APIs
+      // that send `Access-Control-Allow-Origin: *`, e.g. OMDB).
+      // If a proxy is configured, try it first then fall back to direct.
+      var urllibResponses = {};
+      var mod = Sk.sysmodules.mp$subscript(library);
+      mod.$d.urlopen.func_code = function(url, data, timeout) {
+        var target = url.v;
+        if (urllibResponses[target] === undefined) {
+          var proxyVal = $('#proxy').val();
+          var candidates = [];
+          if (proxyVal) {
+            // wrap url with proxied address
+            candidates.push(proxyVal + '?url=' + encodeURIComponent(target));
+          }
+          // direct client-side request (no server required)
+          candidates.push(target);
 
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("GET", proxy, false);
-            xmlhttp.send(null);
+          var lastErr = null;
+          for (var i = 0; i < candidates.length; i++) {
+            try {
+              var xmlhttp = new XMLHttpRequest();
+              xmlhttp.open("GET", candidates[i], false);
+              xmlhttp.send(null);
 
-            // cache responseText
-            urllibResponses[url.v] = xmlhttp.responseText;
+              // sync XHR throws on network failure; also treat HTTP errors as failure
+              // (status is 0 for file://, so only fail on explicit 4xx/5xx)
+              if (xmlhttp.status && xmlhttp.status >= 400) {
+                lastErr = new Error('HTTP ' + xmlhttp.status + ' from ' + candidates[i]);
+                continue;
+              }
 
-            if (urllibResponses[url.v].length) {
-              // but remove it after a while
-              setTimeout(function() {
-                urllibResponses[url.v] = undefined;
-              }, 10 * urllibResponses[url.v].length);
+              // cache responseText
+              urllibResponses[target] = xmlhttp.responseText;
+              lastErr = null;
+              break;
+            } catch (e) {
+              lastErr = e;
             }
           }
 
-          return Sk.misceval.callsim(mod.$d.Response, { responseText : urllibResponses[url.v] })
+          if (lastErr) {
+            throw lastErr;
+          }
+
+          if (urllibResponses[target] && urllibResponses[target].length) {
+            // but remove it after a while
+            (function(cacheKey, cacheLen) {
+              setTimeout(function() {
+                urllibResponses[cacheKey] = undefined;
+              }, 10 * cacheLen);
+            })(target, urllibResponses[target].length);
+          }
         }
+
+        return Sk.misceval.callsim(mod.$d.Response, { responseText : urllibResponses[target] })
       }
       break;
     case 'pygal':
