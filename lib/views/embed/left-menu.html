@@ -59,5 +59,8 @@
       <a class='menu-button font-size large-font left' data-action="code.fontsize" data-data="2em" tabindex="0" aria-label="Set font size to large" role="menuitem">aA</a>
     </li>
     {% endblock %}
+    {% if config.app.version %}
+    <li style="position: absolute; bottom: 0; left: 0; right: 0; margin: 0;"><label style="margin: 0; text-transform: none;" title="Deployed app version">v{{ config.app.version }}</label></li>
+    {% endif %}
   </ul>
 </aside>

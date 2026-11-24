@@ -25,6 +25,8 @@ app:
   adminEmail: ''
   logo: '/img/trinket-logo.png'
   logoIcon: '/img/trinket-logo-circles.png'
+  # Footer "Open Source on GitHub" link. Forks override in local.yaml (or APP_GITHUB_URL).
+  githubUrl: 'https://github.com/trinketapp/trinket-oss'
   hostname: 0.0.0.0
   port: 3000
   url:

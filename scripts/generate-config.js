@@ -21,6 +21,7 @@ let inRedis = false;
 let inMail = false;
 let inEmbedSkulpt = false;
 let inCdn = false;
+let versionInjected = false;
 
 // Determine configuration values from env or default
 // Generating a secure random 32-character password if not provided to allow zero-config run
@@ -34,11 +35,25 @@ if (!sessionPassword) {
 
 const appUrlProtocol = process.env.APP_URL_PROTOCOL || 'http';
 const appUrlHostname = process.env.APP_URL_HOSTNAME || 'localhost';
+// App version shown subtly in the site footer / embed header (see lib/views).
+// Single source of truth is root package.json; APP_VERSION env can override.
+let appVersion = process.env.APP_VERSION || '';
+if (!appVersion) {
+  try {
+    appVersion = require(path.join(process.cwd(), 'package.json')).version || '';
+  } catch (e) {
+    appVersion = '';
+  }
+}
 let appUrlPort = process.env.APP_URL_PORT !== undefined ? process.env.APP_URL_PORT : '3000';
 if (appUrlPort === 'none' || appUrlPort === 'null' || appUrlPort === 'undefined') {
   appUrlPort = '';
 }
 const appSessionIsSecure = process.env.APP_SESSION_IS_SECURE || 'false';
+
+// Footer "Open Source on GitHub" link. Default lives in local.example.yaml
+// (upstream repo); forks override here via env or by editing local.yaml.
+const appGithubUrl = process.env.APP_GITHUB_URL;
 
 const mongoHost = process.env.MONGO_HOST || 'mongodb';
 const mongoPort = process.env.MONGO_PORT || '27017';
@@ -106,6 +121,13 @@ for (let i = 0; i < lines.length; i++) {
     inEmbedSkulpt = false;
     inCdn = false;
     inMail = false;
+  }
+
+  // Inject app.version as the first key under top-level `app:` so templates
+  // can render it via {{ config.app.version }} (footer / embed header).
+  if (!versionInjected && /^  url:$/.test(line)) {
+    newLines.push(`  version: '${appVersion}'`);
+    versionInjected = true;
   }
 
   // Section boundary detection
@@ -256,6 +278,12 @@ for (let i = 0; i < lines.length; i++) {
       newLines.push(line.replace(/proxy:.*/, `proxy: '${appEmbedProxy}'`));
       continue;
     }
+  }
+
+  // app.githubUrl (footer link). APP_GITHUB_URL overrides local.example.yaml.
+  if (appGithubUrl && /^  githubUrl:/.test(line)) {
+    newLines.push(line.replace(/githubUrl:.*/, `githubUrl: '${appGithubUrl}'`));
+    continue;
   }
 
   if (inCdn) {

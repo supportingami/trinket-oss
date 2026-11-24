@@ -60,6 +60,7 @@
   {% endif %}
 </head>
 <body id="embed_content_{% block embed_lang %}{{ lang }}{% endblock %}"
+      data-app-version="{{ config.app.version }}"
       data-no-metrics="{{ true if isOwner or snapshot else false }}"
       data-assignment="{{ true if assignment else false }}"
       data-assignment-feedback="{{ true if assignmentFeedback else false }}"
@@ -115,7 +116,7 @@
         {# Title bar - different content for outputOnly vs full #}
         <section class="left title-bar">
         {% if outputOnly %}
-          <span title="{{ config.app.siteName }}" data-dropdown="brand-menu" aria-controls="brand-menu" aria-expanded="false">
+          <span title="{{ config.app.siteName }}{% if config.app.version %} v{{ config.app.version }}{% endif %}" data-dropdown="brand-menu" aria-controls="brand-menu" aria-expanded="false">
             {% if config.app.logo %}<img src="{{ config.app.logo | cachePrefix }}" alt="{{ config.app.siteName }}" />{% endif %}
           </span>
           <ul id="brand-menu" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
@@ -123,7 +124,7 @@
             <li><a href="//{{config.app.url.hostname}}/signup" target="_blank">Sign Up</a></li>
           </ul>
         {% else %}
-          <span title="{{ config.app.siteName }}" data-dropdown="brand-menu" aria-controls="brand-menu" aria-expanded="false">
+          <span title="{{ config.app.siteName }}{% if config.app.version %} v{{ config.app.version }}{% endif %}" data-dropdown="brand-menu" aria-controls="brand-menu" aria-expanded="false">
             {% if config.app.logo %}<img class="show-for-large-up" src="{{ config.app.logo | cachePrefix }}" alt="{{ config.app.siteName }}" />{% endif %}
             {% if config.app.logoIcon %}<img class="show-for-medium-down" src="{{ config.app.logoIcon | cachePrefix }}" alt="{{ config.app.siteName }}" />{% endif %}
           </span>

@@ -215,9 +215,10 @@
       <div class="row">
         <div class="small-12 columns">
           <p style="margin: 0;">
-            <a href="https://github.com/trinketapp/trinket-oss" style="color: #333;"><i class="fa fa-github"></i> Open Source on GitHub</a>
+            <a href="{{ config.app.githubUrl }}" style="color: #333;"><i class="fa fa-github"></i> Open Source on GitHub</a>
             &nbsp;&middot;&nbsp;
             CC0 1.0
+            {% if config.app.version %}&nbsp;&middot;&nbsp;<span style="font-size: 12px; opacity: 0.7;" title="Deployed app version">v{{ config.app.version }}</span>{% endif %}
           </p>
         </div>
       </div>
