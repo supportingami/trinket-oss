@@ -10,16 +10,16 @@ Treat this repo as **detached** for all intents and purposes: no upstream remote
 
 * **Where:** Portainer stack hosted by c2dev.
 * **URL:** `https://trinket.samicharity.co.uk` — low risk to record here, already committed as example host in `INTEGRATION_FINDINGS.md:105,113,143` and `serverside/cors-proxy/`. No secrets, IPs, or credentials in this file.
-* **How:** CI is build-only (`.github/workflows/deploy.yml` — `main` → `ghcr.io/supportingami/trinket-oss/{app,python-runner}:latest`). Prod is manual `docker-compose -f docker-compose.prod.yml up -d` on the Portainer host pulling those `:latest` images. Reverse proxy: `/ → trinket:3000`, `/python3/ → python-runner:8080` (see `INTEGRATION_FINDINGS.md:141-150`).
+* **How:** CI is build-only (`.github/workflows/deploy.yml` — `main` → `ghcr.io/supportingami/trinket-oss/{app,python-runner}:latest` plus `:{<root package.json version>}`). Prod is manual `IMAGE_TAG=<version> docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d` on the Portainer host (`docker-compose.prod.yml` defaults to `:latest` when `IMAGE_TAG` is unset; pin `IMAGE_TAG` to roll back). Reverse proxy: `/ → trinket:3000`, `/python3/ → python-runner:8080` (see `INTEGRATION_FINDINGS.md:141-150`). Bump root `package.json:version` on every deployable change (see `AGENTS.md §8`).
 * Host config via `APP_URL_HOSTNAME` / `APP_URL_PROTOCOL` / `APP_URL_PORT` → `scripts/generate-config.js` → `config/local.yaml` (gitignored). No `.env` committed.
 
 We only use **client-side** langs in prod (`python/html/blocks/glowscript/glowscript-blocks/console/music` — `config/default.yaml:5-13`, `python3/java/R/pygame: false`).
 
 ## What differs from upstream (grouped)
 
-* **Infra/CI:** multi-stage `Dockerfile` + PM2, `docker-compose.prod.yml` (prebuilt GHCR images), `scripts/generate-config.js` env→YAML, `deploy.yml` build+push, `.dockerignore`, `INTEGRATION_FINDINGS.md`, `TODO.md`.
+* **Infra/CI:** multi-stage `Dockerfile` + PM2, `docker-compose.prod.yml` (prebuilt GHCR images, `${IMAGE_TAG:-latest}` pin/rollback), `scripts/generate-config.js` env→YAML (incl. `app.version` from `package.json`/`APP_VERSION`, `app.githubUrl`/`APP_GITHUB_URL`), `deploy.yml` build+push (`:latest` + `:<package.json version>`), `.dockerignore`, `INTEGRATION_FINDINGS.md`, `TODO.md`.
 * **Backend (out of agent scope):** consolidated `serverside/python-runner/` single container (manager+shell, `manager.js`/`server.js`/`ecosystem.config.cjs`), Resend mail (`RESEND_API_KEY`/`MAIL_*`), custom Redis DB, `lib/util/{queues,store,routeParser,helpers}` fixes, `app.js` session/cache hardening.
-* **Frontend (in scope):** in-browser Pygal via Highcharts (`public/js/skulpt/pygal/__init__.js`, `public/js/vendor/highcharts/`), `public/js/embed/{python,embed,glowscript}.js` + `public/js/skulpt/wrapper.js` tweaks, `config/default.yaml` client flags.
+* **Frontend (in scope):** in-browser Pygal via Highcharts (`public/js/skulpt/pygal/__init__.js`, `public/js/vendor/highcharts/`), `public/js/embed/{python,embed,glowscript}.js` + `public/js/skulpt/wrapper.js` tweaks, `config/default.yaml` client flags, footer app version + configurable footer GitHub link (`app.githubUrl`), embed header/sidebar version display.
 * **Client urllib/CORS (in scope):** `public/js/embed/python.js` `urlopen` shim tries `{proxy}?url=<target>` first (when `app.embed.proxy` set) then falls back to direct client-side fetch; `config/default.yaml` proxy default is `''` (zero-server, works for `Access-Control-Allow-Origin: *` APIs); `APP_EMBED_PROXY` plumbed through `scripts/generate-config.js`, `docker-compose.yml`, `docker-compose.prod.yml`, `README.md`, `config/local.example.yaml`; new serverless proxy `serverside/cors-proxy/` (Cloudflare Worker: `ALLOWED_HOSTS` default `*` with bare-domain matching, `TRINKET_ORIGINS` caller lock, `https`-only, metadata-host block, 10MB cap) + docs in `GETTING_STARTED.md`.
 * **Removed:** `lib/controllers/imports.js` (-733), `lib/views/users/includes/import.html` (-257) — legacy import UI.
 * **Docs:** `README.md`/`GETTING_STARTED.md` rewritten for Docker + env vars, `serverside/README.md` runner notes.
@@ -34,6 +34,7 @@ Full file diff (requires temporary upstream): `git remote add upstream https://g
 | [#2](https://github.com/supportingami/trinket-oss/pull/2) | feat: pygal js integration | `feat/pygal-js` | 2026-08-31 |
 | [#3](https://github.com/supportingami/trinket-oss/pull/3) | feat: unified backend server | `feat/unified-backend-server` | 2026-08-31 |
 | [#4](https://github.com/supportingami/trinket-oss/pull/4) | feat: zero-server urllib with optional Cloudflare CORS proxy | `feat/urllib-cors-proxy` | open |
+| [#5](https://github.com/supportingami/trinket-oss/pull/5) | feat: versioned image tags and visible app version | `feat/versioned-deploys` | open |
 
 PR bodies were minimal (`#1` empty, `#2` “Integrate pygal JS into docker image”, `#3` “add single container image for running backend server”).
 
